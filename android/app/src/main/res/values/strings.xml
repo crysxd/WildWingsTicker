@@ -1,0 +1,8 @@
+<resources>
+    <string name="gcm_project_number">469841125048</string>
+
+
+    <string name="app_name">WildWingsTicker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
