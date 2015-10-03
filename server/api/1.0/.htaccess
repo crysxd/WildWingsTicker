@@ -1,0 +1,17 @@
+#Block access to .txt files (they are used for documentation)
+<Files  ~ "\.txt$">
+  Order allow,deny
+  Deny from all
+</Files>
+
+# Enable RewriteEngine
+RewriteEngine On
+
+# Redirect to HTTPS if the request is using HTTP
+RewriteCond %{HTTPS} !=on
+RewriteCond %{ENV:HTTPS} !=on
+RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
+# Add .php to all urls
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.+)$ $1.php [L]
