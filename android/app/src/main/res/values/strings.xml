@@ -3,6 +3,8 @@
 
 
     <string name="app_name">WildWingsTicker</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="ui_view_player_stats">Spielerinfo</string>
+    <string name="ui_share">Teilen</string>
+
 </resources>
