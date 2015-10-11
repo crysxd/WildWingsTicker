@@ -1,6 +1,7 @@
 package crysxd.de.wildwingsticker.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -8,6 +9,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,7 +42,7 @@ public class WwGameReportHolder {
         if(mSingleton == null || mSingleton.getLastEventTimestamp() < System.currentTimeMillis() - TimeUnit.HOURS.toMillis(12)) {
             mSingleton = new WwGameReport(score, status);
             mSingleton.persist(mSaveFile);
-
+            mSingleton.setContext(con);
         }
 
         /* Return it */
@@ -82,10 +85,10 @@ public class WwGameReportHolder {
         if(mSingleton == null && mSaveFile.exists()) {
             try {
                 mSingleton = WwGameReport.restoreGameReport(mSaveFile);
+                mSingleton.setContext(con);
             } catch (Exception e) {
                 Log.e(WwGameReportHolder.class.getSimpleName(), "Error while restoring WwGamReport", e);
             }
         }
     }
-
 }

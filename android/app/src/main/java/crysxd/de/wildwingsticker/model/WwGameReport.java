@@ -1,5 +1,8 @@
 package crysxd.de.wildwingsticker.model;
 
+import android.content.Context;
+import android.content.Intent;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,12 +13,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.ParseException;
+import java.util.List;
 import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * A object which represents a collection of {@link WwGameEvent}s.
  */
 public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
+
+    public static String INTENT_REPORT_UPDATED = WwGameReport.class.getName() + ".INTENT_REPORT_UPDATED";
 
     /**
      * Restores a persisted {@link WwGameReport} object from the given file
@@ -38,10 +45,10 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
     private int mGoalsGuest;
     private String mGuestName;
     private String mHomeName;
-    private String mGuestNameShort;
-    private String mHomeNameShort;
     private int mEventCount;
     private long mLastEventTimestamp;
+
+    private transient Context mContext;
 
     /**
      * Creates a completely new instance without any events as entries.
@@ -51,6 +58,12 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
      */
     public WwGameReport(JSONObject score, JSONObject status) throws JSONException {
         this.setGameMetaData(score, status);
+
+    }
+
+    void setContext(Context con) {
+        this.mContext = con.getApplicationContext();
+        this.propagateUpdate();
 
     }
 
@@ -97,9 +110,20 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
             this.mLastEventTimestamp = gameEvent.getTimeSend();
         }
 
-        /* Insert and return */
+        /* Insert */
         this.put(gameEvent.getId(), gameEvent);
+
+        /* Propagate change */
+        this.propagateUpdate();
+
+        /* Return */
         return gameEvent;
+
+    }
+
+    private void propagateUpdate() {
+        Intent i = new Intent(INTENT_REPORT_UPDATED);
+        this.mContext.sendBroadcast(i);
 
     }
 
@@ -159,16 +183,6 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
 
     public long getLastEventTimestamp() {
         return this.mLastEventTimestamp;
-
-    }
-
-    public String getHomeNameShort() {
-        return this.mHomeNameShort;
-
-    }
-
-    public String getGuestNameShort() {
-        return this.mGuestNameShort;
 
     }
 
