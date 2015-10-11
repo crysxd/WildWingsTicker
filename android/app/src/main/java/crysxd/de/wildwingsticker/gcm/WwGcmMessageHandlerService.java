@@ -120,15 +120,16 @@ public class WwGcmMessageHandlerService extends IntentService {
                 builder.setContentTitle("Strafe gegen die " + e1.getPlayerTeamName());
                 builder.setContentText(minute + " | " + e1.getPlayer());
                 break;
-            case 4:
+            case 5:
                 WwGoalGameEvent e2 = (WwGoalGameEvent) event;
                 builder.setContentTitle("Tor für die " + e2.getPlayerTeamName());
                 builder.setContentText(minute + " | " + e2.getScore() + " | " + e2.getPlayer());
                 break;
-            case 5:
+            case 4:
                 WwGoalGameEvent e3 = (WwGoalGameEvent) event;
                 builder.setContentTitle("Toooor für die Wild Wings!");
                 builder.setContentText(minute + " | " + e3.getScore() + " | " + e3.getPlayer());
+                break;
         }
 
         /* Set sound and small icon */

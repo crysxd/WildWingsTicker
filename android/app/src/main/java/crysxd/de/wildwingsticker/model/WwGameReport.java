@@ -38,6 +38,8 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
     private int mGoalsGuest;
     private String mGuestName;
     private String mHomeName;
+    private String mGuestNameShort;
+    private String mHomeNameShort;
     private int mEventCount;
     private long mLastEventTimestamp;
 
@@ -157,6 +159,16 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
 
     public long getLastEventTimestamp() {
         return this.mLastEventTimestamp;
+
+    }
+
+    public String getHomeNameShort() {
+        return this.mHomeNameShort;
+
+    }
+
+    public String getGuestNameShort() {
+        return this.mGuestNameShort;
 
     }
 

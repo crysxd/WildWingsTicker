@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -16,39 +17,20 @@ import java.util.Map;
  */
 public class WwServerApiCall {
 
-    /* The server domain */
-    private final String SERVER_HOST;
-
     /* The server secret */
     private final String API_KEY_HEADER = "Api-Key";
     private final String API_KEY = "xUSMhPJR7tfd2FnEh9Zz8LvKLaRQqYWMJFqRkYzhhEn9azDhzvHx737H4PqhDbUdHaVTYk27Pe6PDAX4UwrSppsg3FrxHaAfamYZwRWaVTQrjDj5ZAMeN4nGzC57DwdE";
 
-    /* The name of the API function to be called. e.g. "beacon/reportLowBattery" */
-    private final String FUNCTION_NAME;
-
     /* The complete URL */
-    private final String FUNCTION_URL;
+    private final URL FUNCTION_URL;
 
     /**
      * Creates a new instance for the given function. The function name is e.g "beacons/reportLowBattery" if the
      * PHP-File reportLowBattery.php in the directory beacons should be called.
      * @param functionName the name of the api function which should be called
      */
-    public WwServerApiCall(String functionName) {
-        this("wwticker.nunki.uberspace.de", functionName);
-
-    }
-
-    /**
-     * Creates a new instance for the given function. The function name is e.g "beacons/reportLowBattery" if the
-     * PHP-File reportLowBattery.php in the directory beacons should be called.
-     * @param host the host address of the server e.g. "safeguard24.care"
-     * @param functionName the name of the api function which should be called
-     */
-    public WwServerApiCall(String host, String functionName) {
-        this.FUNCTION_NAME = functionName;
-        this.SERVER_HOST = host;
-        this.FUNCTION_URL = "https://" + this.SERVER_HOST + "/api/1.0/" + FUNCTION_NAME;
+    public WwServerApiCall(String functionName) throws MalformedURLException {
+        this.FUNCTION_URL = new WwServerURLBuilder(functionName).build();
 
     }
 
@@ -75,11 +57,8 @@ public class WwServerApiCall {
      * @throws Exception
      */
     public JSONObject performPostApiCall(Map<String, String> formData) throws Exception {
-        /* Create URL */
-        URL url = new URL(this.FUNCTION_URL);
-
         /* Send Request */
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        HttpURLConnection con = (HttpURLConnection) this.FUNCTION_URL.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty(API_KEY_HEADER, API_KEY);
         con.setDoInput(true);
@@ -118,7 +97,7 @@ public class WwServerApiCall {
      */
     public JSONObject performGetApiCall(Map<String, String> urlParams) throws Exception {
 
-        StringBuilder urlString = new StringBuilder(this.FUNCTION_URL);
+        StringBuilder urlString = new StringBuilder(this.FUNCTION_URL.toString());
         for(String key : urlParams.keySet()) {
             urlString.append('&');
             urlString.append(key);

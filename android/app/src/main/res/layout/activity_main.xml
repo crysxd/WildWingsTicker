@@ -48,7 +48,7 @@ tools:context=".ScrollingActivity">
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:id="@+id/imageViewTeamHome"
-                            android:src="@drawable/ic_serc"
+                            android:src="@mipmap/ic_placeholder"
                             android:scaleType="fitEnd"
                             android:adjustViewBounds="true"/>
 
@@ -68,7 +68,7 @@ tools:context=".ScrollingActivity">
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:id="@+id/imageViewTeamGuest"
-                            android:src="@drawable/ic_erci"
+                            android:src="@mipmap/ic_placeholder"
                             android:scaleType="fitEnd"
                             android:adjustViewBounds="true"/>
 

@@ -1,5 +1,6 @@
 package crysxd.de.wildwingsticker.view;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,11 @@ import crysxd.de.wildwingsticker.model.WwGameEvent;
 import crysxd.de.wildwingsticker.model.WwGameReport;
 import crysxd.de.wildwingsticker.model.WwGoalGameEvent;
 import crysxd.de.wildwingsticker.model.WwPenaltyGameEvent;
+import crysxd.de.wildwingsticker.model.WwPlayerCausedGameEvent;
 import crysxd.de.wildwingsticker.model.WwTextGameEvent;
+import crysxd.de.wildwingsticker.server.WwImageLoadTask;
+import crysxd.de.wildwingsticker.server.WwPlayerImageLoadTask;
+import crysxd.de.wildwingsticker.server.WwTeamImageLoadTask;
 
 /**
  * Created by cwuer on 10/5/15.
@@ -49,6 +54,7 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     public static class PenaltyViewHolder extends TextViewHolder {
 
         public ImageView mImageViewPlayer;
+        public AsyncTask mImageLoadTask;
         public Button mButtonPlayerStats;
         public TextView mTextViewPlayer;
 
@@ -142,11 +148,26 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
         holder.mTextViewPlayer.setText(e.getPlayer());
         holder.mTextViewScore.setText("Neuer Spielstand: " + e.getScore());
 
+        this.onBindPlayerImageView(holder, e);
+
     }
 
     private void onBindPenaltyViewHolder(PenaltyViewHolder holder, WwPenaltyGameEvent e) {
         holder.mTextViewText.setText("Strafe gegen die " + e.getPlayerTeamName());
         holder.mTextViewPlayer.setText("Spieler: " + e.getPlayer());
+
+        this.onBindPlayerImageView(holder, e);
+
+    }
+
+
+    private void onBindPlayerImageView(PenaltyViewHolder holder, WwPlayerCausedGameEvent e) {
+        if(holder.mImageLoadTask != null && holder.mImageLoadTask.getStatus() != AsyncTask.Status.FINISHED) {
+            holder.mImageLoadTask.cancel(true);
+        }
+
+        holder.mImageViewPlayer.setImageResource(R.drawable.ice);
+        holder.mImageLoadTask = new WwPlayerImageLoadTask(holder.mImageViewPlayer).execute(e.getPlayerTeamName(), e.getPlayer());
 
     }
 

@@ -38,6 +38,10 @@ public class WwPlayerCausedGameEvent extends WwGameEvent implements Serializable
         this.mImageUrl = gameEventJson.getString("bild");
         this.mTeamName = gameEventJson.getString("team");
 
+        if(!this.mImageUrl.isEmpty()) {
+            this.mImageUrl = "http://www.bwu-vs.de:8080" + this.mImageUrl;
+
+        }
     }
 
     /**
