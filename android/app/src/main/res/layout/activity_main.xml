@@ -46,7 +46,7 @@ tools:context=".ScrollingActivity">
 
                         <ImageView
                             android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:id="@+id/imageViewTeamHome"
                             android:src="@mipmap/ic_placeholder"
                             android:scaleType="fitEnd"
@@ -66,7 +66,7 @@ tools:context=".ScrollingActivity">
 
                         <ImageView
                             android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:id="@+id/imageViewTeamGuest"
                             android:src="@mipmap/ic_placeholder"
                             android:scaleType="fitEnd"
