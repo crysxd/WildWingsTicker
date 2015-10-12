@@ -16,20 +16,53 @@
         android:layout_marginTop="0dp">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
 
-            <include layout="@layout/card_header_game_event"/>
-
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/textViewText"
-                android:layout_margin="@dimen/gap_default"/>
+                android:gravity="top">
 
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="New Text"
+                    android:layout_weight="1"
+
+                    android:id="@+id/textViewText"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_schedule_24dp"
+                        android:tint="#000"/>
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="24:00"
+                        android:textColor="#000"
+                        android:textSize="14sp"
+                        android:id="@+id/textViewTime"
+                        android:gravity="right" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

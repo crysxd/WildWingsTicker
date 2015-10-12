@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import crysxd.de.wildwingsticker.R;
 import crysxd.de.wildwingsticker.model.WwGameReport;
@@ -80,15 +85,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Load images */
-        new WwTeamImageLoadTask(this.mImageViewTeamGuest).execute(report.getGuestName());
-        new WwTeamImageLoadTask(this.mImageViewTeamHome).execute(report.getHomeName());
+        new WwTeamImageLoadTask(this, this.mImageViewTeamGuest).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, report.getGuestName());
+        new WwTeamImageLoadTask(this, this.mImageViewTeamHome).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, report.getHomeName());
 
         /* Set title */
         String title = report.getGoalsHome() + ":" + report.getGoalsGuest();
         this.mToolbarLayout.setTitle(title);
 
         /* Update list */
-        this.mEventListAdapter = new WwGameReportAdapter(WwGameReportHolder.i(this));
+        this.mEventListAdapter = new WwGameReportAdapter(this, WwGameReportHolder.i(this));
         this.mEventList.setAdapter(this.mEventListAdapter);
 
     }

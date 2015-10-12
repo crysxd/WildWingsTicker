@@ -1,7 +1,9 @@
 package crysxd.de.wildwingsticker.server;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.net.URLEncoder;
@@ -11,8 +13,8 @@ import java.net.URLEncoder;
  */
 public class WwPlayerImageLoadTask extends WwImageLoadTask {
 
-    public WwPlayerImageLoadTask(ImageView bmImage) {
-        super(bmImage);
+    public WwPlayerImageLoadTask(Context con, ImageView bmImage) {
+        super(con, bmImage);
     }
 
     @Override
@@ -25,8 +27,21 @@ public class WwPlayerImageLoadTask extends WwImageLoadTask {
             return super.doInBackground(url);
 
         } catch(Exception e) {
-            Log.e(this.getClass().getSimpleName(), "Error shil building url", e);
+            Log.e(this.getClass().getSimpleName(), "Error while building url", e);
             return null;
+
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Drawable result) {
+        super.onPostExecute(result);
+
+        if(result == null) {
+            this.getImageView().setVisibility(View.GONE);
+
+        } else {
+            this.getImageView().setVisibility(View.VISIBLE);
 
         }
     }

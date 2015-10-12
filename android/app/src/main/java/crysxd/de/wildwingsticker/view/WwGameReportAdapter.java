@@ -1,5 +1,6 @@
 package crysxd.de.wildwingsticker.view;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import crysxd.de.wildwingsticker.model.WwGoalGameEvent;
 import crysxd.de.wildwingsticker.model.WwPenaltyGameEvent;
 import crysxd.de.wildwingsticker.model.WwPlayerCausedGameEvent;
 import crysxd.de.wildwingsticker.model.WwTextGameEvent;
+import crysxd.de.wildwingsticker.server.WwGoalImageLoadTask;
 import crysxd.de.wildwingsticker.server.WwImageLoadTask;
 import crysxd.de.wildwingsticker.server.WwPlayerImageLoadTask;
 import crysxd.de.wildwingsticker.server.WwTeamImageLoadTask;
@@ -53,7 +55,6 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
 
     public static class PenaltyViewHolder extends TextViewHolder {
 
-        public ImageView mImageViewPlayer;
         public AsyncTask mImageLoadTask;
         public Button mButtonPlayerStats;
         public TextView mTextViewPlayer;
@@ -62,7 +63,6 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
             super(itemView);
 
             this.mButtonPlayerStats = (Button) itemView.findViewById(R.id.buttonPlayerStats);
-            this.mImageViewPlayer = (ImageView) itemView.findViewById(R.id.imageViewPlayer);
             this.mTextViewPlayer = (TextView) itemView.findViewById(R.id.textViewPlayer);
 
         }
@@ -70,14 +70,14 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
 
     public static class GoalViewHolder extends PenaltyViewHolder {
 
-        public TextView mTextViewScore;
         public Button mButtonShare;
+        public ImageView mImageView;
 
         public GoalViewHolder(View itemView) {
             super(itemView);
 
-            this.mTextViewScore = (TextView) itemView.findViewById(R.id.textViewScore);
             this.mButtonShare = (Button) itemView.findViewById(R.id.buttonShare);
+            this.mImageView = (ImageView) itemView.findViewById(R.id.imageView);
 
         }
     }
@@ -89,10 +89,12 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
      */
 
     private WwGameReport mDataSet;
+    private Context mContext;
 
-
-    public WwGameReportAdapter(WwGameReport report) {
+    public WwGameReportAdapter(Context con, WwGameReport report) {
         this.mDataSet = report;
+        this.mContext = con;
+
     }
 
 
@@ -129,11 +131,11 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
         holder.mTextViewTime.setText(e.getTimeString());
 
         switch(e.getType()) {
-            case 1:  holder.mTextViewTitle.setText(""); this.onBindTextViewHolder((TextViewHolder) holder, (WwTextGameEvent) e); break;
+            case 1: this.onBindTextViewHolder((TextViewHolder) holder, (WwTextGameEvent) e); break;
             case 2:
-            case 3: holder.mTextViewTitle.setText("Strafe"); this.onBindPenaltyViewHolder((PenaltyViewHolder) holder, (WwPenaltyGameEvent) e); break;
-            case 4: holder.mTextViewTitle.setText("Toooooooor!"); this.onBindGoalViewHolder((GoalViewHolder) holder, (WwGoalGameEvent) e); break;
-            case 5: holder.mTextViewTitle.setText("Tor"); this.onBindGoalViewHolder((GoalViewHolder) holder, (WwGoalGameEvent) e); break;
+            case 3: this.onBindPenaltyViewHolder((PenaltyViewHolder) holder, (WwPenaltyGameEvent) e); break;
+            case 4:
+            case 5: this.onBindGoalViewHolder((GoalViewHolder) holder, (WwGoalGameEvent) e); break;
             default: holder.mTextViewTitle.setText("Unkown"); break;
         }
     }
@@ -144,31 +146,29 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     }
 
     private void onBindGoalViewHolder(GoalViewHolder holder, WwGoalGameEvent e) {
-        holder.mTextViewText.setText("Tor für die " + e.getPlayerTeamName());
-        holder.mTextViewPlayer.setText(e.getPlayer());
-        holder.mTextViewScore.setText("Neuer Spielstand: " + e.getScore());
+        holder.mTextViewTitle.setText("Tor");
+        holder.mTextViewText.setText("für " + e.getPlayerTeamName());
+        holder.mTextViewPlayer.setText("durch " + e.getPlayer());
 
-        this.onBindPlayerImageView(holder, e);
+        this.onBindPlayerImageView(holder, new WwGoalImageLoadTask(this.mContext, holder.mImageView), e);
 
     }
 
     private void onBindPenaltyViewHolder(PenaltyViewHolder holder, WwPenaltyGameEvent e) {
-        holder.mTextViewText.setText("Strafe gegen die " + e.getPlayerTeamName());
-        holder.mTextViewPlayer.setText("Spieler: " + e.getPlayer());
-
-        this.onBindPlayerImageView(holder, e);
+        holder.mTextViewTitle.setText("Strafe");
+        holder.mTextViewText.setText("gegen " + e.getPlayerTeamName());
+        holder.mTextViewPlayer.setText("für " + e.getPlayer());
 
     }
 
 
-    private void onBindPlayerImageView(PenaltyViewHolder holder, WwPlayerCausedGameEvent e) {
+    private void onBindPlayerImageView(PenaltyViewHolder holder, WwImageLoadTask task, WwPlayerCausedGameEvent e) {
         if(holder.mImageLoadTask != null && holder.mImageLoadTask.getStatus() != AsyncTask.Status.FINISHED) {
             holder.mImageLoadTask.cancel(true);
+
         }
 
-        holder.mImageViewPlayer.setImageResource(R.drawable.ice);
-        holder.mImageLoadTask = new WwPlayerImageLoadTask(holder.mImageViewPlayer).execute(e.getPlayerTeamName(), e.getPlayer());
-
+        holder.mImageLoadTask = task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, e.getPlayerTeamName(), e.getPlayer());
     }
 
     @Override

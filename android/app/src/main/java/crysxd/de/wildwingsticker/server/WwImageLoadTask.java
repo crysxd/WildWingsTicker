@@ -1,14 +1,21 @@
 package crysxd.de.wildwingsticker.server;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import crysxd.de.wildwingsticker.R;
 
 /**
  * Created by cwuer on 10/10/15.
@@ -18,18 +25,25 @@ public class WwImageLoadTask extends AsyncTask<String, Void, Drawable> {
 
     private ImageView mImageView;
     private Resources mResources;
+    private Context mContext;
 
-    public WwImageLoadTask(ImageView bmImage) {
+    public WwImageLoadTask(Context con, ImageView bmImage) {
+        super();
         this.mImageView = bmImage;
         this.mResources = this.mImageView.getResources();
+        this.mContext = con;
 
     }
 
     protected Drawable doInBackground(String... urls) {
         try {
-            Log.i(this.getClass().getSimpleName(), "Loading " + urls[0]);
-            InputStream in = new URL(urls[0]).openStream();
-            return new BitmapDrawable(this.mResources, in);
+            InputStream in = new WwCachedUrlInputStream(this.mContext, new URL(urls[0]));
+            BitmapDrawable d =  new BitmapDrawable(this.mResources, in);
+            in.close();
+            return d;
+
+        } catch (FileNotFoundException e) {
+            return null;
 
         } catch (Exception e) {
             Log.e(this.getClass().getSimpleName(), "Error while loading image", e);
@@ -43,5 +57,10 @@ public class WwImageLoadTask extends AsyncTask<String, Void, Drawable> {
             this.mImageView.setImageDrawable(result);
 
         }
+    }
+
+    protected ImageView getImageView() {
+        return this.mImageView;
+
     }
 }

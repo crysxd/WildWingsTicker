@@ -88,10 +88,11 @@ tools:context=".ScrollingActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_list"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:paddingTop="@dimen/card_gap"/>
+        android:paddingTop="@dimen/card_gap"
+        android:clipToPadding="false" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -7,6 +7,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="gap_default">8dp</dimen>
-    <dimen name="card_gap">4dp</dimen>
+    <dimen name="card_gap">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_padding_action">8dp</dimen>
 
 </resources>
