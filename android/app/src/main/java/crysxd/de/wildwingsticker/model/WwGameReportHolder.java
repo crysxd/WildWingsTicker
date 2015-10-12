@@ -2,6 +2,7 @@ package crysxd.de.wildwingsticker.model;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
+import crysxd.de.wildwingsticker.server.WwGetGameReportTask;
+
 /**
  * A singleton wrapper for {@link WwGameReport} which holds always the currently active game.
  */
@@ -23,6 +26,9 @@ public class WwGameReportHolder {
 
     /* The save file in which the game should be saved */
     private static File mSaveFile;
+
+    /* The AsyncTask used to load a full game report */
+    private static WwGetGameReportTask mGetReportTask;
 
     /**
      * Returns the current {@link WwGameReport} or creates a new one if necessary.
@@ -56,6 +62,11 @@ public class WwGameReportHolder {
      */
     public static synchronized WwGameReport i(Context con) {
         load(con);
+
+        if(mSingleton == null && (mGetReportTask == null || mGetReportTask.getStatus() == AsyncTask.Status.FINISHED)) {
+            mGetReportTask = (WwGetGameReportTask) new WwGetGameReportTask(con).execute();
+        }
+
         return mSingleton;
 
     }

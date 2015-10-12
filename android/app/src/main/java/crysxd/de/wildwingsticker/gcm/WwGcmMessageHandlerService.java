@@ -19,6 +19,7 @@ import crysxd.de.wildwingsticker.model.WwGameEvent;
 import crysxd.de.wildwingsticker.model.WwGameReport;
 import crysxd.de.wildwingsticker.model.WwGameReportHolder;
 import crysxd.de.wildwingsticker.model.WwGoalGameEvent;
+import crysxd.de.wildwingsticker.model.WwMessageHandler;
 import crysxd.de.wildwingsticker.model.WwPenaltyGameEvent;
 
 /**
@@ -45,9 +46,6 @@ public class WwGcmMessageHandlerService extends IntentService {
             Log.i(this.getClass().getSimpleName(), "Received message");
             Bundle extras = intent.getExtras();
 
-            /* Create the file under which the last game report is persisted */
-
-
             /* Fetch the data from the extras  */
             String json = extras.getString("data");
             int parts = Integer.valueOf(extras.getString("parts_total"));
@@ -73,28 +71,9 @@ public class WwGcmMessageHandlerService extends IntentService {
                 }
             }
 
-            /* Parse the data */
-            JSONObject data = new JSONObject(json);
-            JSONObject score = data.getJSONArray("spielstand").getJSONObject(0);
-            JSONObject status = data.getJSONArray("spielstatus").getJSONObject(0);
-
-            /* Create a report */
-            WwGameReport report = WwGameReportHolder.ic(this, score, status);
-
-            /* Parse all events and add them to the report */
-            JSONArray events = data.getJSONArray("texte");
-            for(int i=0; i<events.length(); i++) {
-                JSONObject eventJSON = events.getJSONObject(i);
-                WwGameEvent event = report.addGameEvent(eventJSON);
-
-                if(event.getType() != 1) {
-                    this.showEventNotification(event);
-
-                }
-            }
-
-            /* Save the report */
-            WwGameReportHolder.persist();
+            /* Parse the data and add it to the report */
+            WwMessageHandler handler = new WwMessageHandler(this);
+            handler.handleMessage(new JSONObject(json), true);
 
         } catch(Exception e) {
             Log.e(this.getClass().getSimpleName(), "Error while creating notification", e);
@@ -103,38 +82,5 @@ public class WwGcmMessageHandlerService extends IntentService {
             WwGcmBroadcastReceiver.completeWakefulIntent(intent);
 
         }
-    }
-
-    private void showEventNotification(WwGameEvent event) {
-        /* Create minute String */
-        String minute = event.getMinute() + ". Minute";
-
-        /* Create builder */
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        /* Set content title and text */
-        switch(event.getType()) {
-            case 2:
-            case 3:
-                WwPenaltyGameEvent e1 = (WwPenaltyGameEvent) event;
-                builder.setContentTitle("Strafe gegen die " + e1.getPlayerTeamName());
-                builder.setContentText(minute + " | " + e1.getPlayer());
-                break;
-            case 4:
-            case 5:
-                WwGoalGameEvent e2 = (WwGoalGameEvent) event;
-                builder.setContentTitle("Tor für die " + e2.getPlayerTeamName());
-                builder.setContentText(minute + " | " + e2.getScore() + " | " + e2.getPlayer());
-                break;
-        }
-
-        /* Set sound and small icon */
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        builder.setSmallIcon(R.drawable.ic_stat_default);
-
-        /* Notify */
-        NotificationManager m = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        m.notify(event.getId(), builder.build());
-
     }
 }

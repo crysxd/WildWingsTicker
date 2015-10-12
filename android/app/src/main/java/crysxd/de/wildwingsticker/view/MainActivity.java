@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,8 @@ import crysxd.de.wildwingsticker.server.WwTeamImageLoadTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    private CoordinatorLayout mCoordinatorLayout;
+
     private RecyclerView mEventList;
     private RecyclerView.Adapter mEventListAdapter;
     private RecyclerView.LayoutManager mEventListLayout;
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolbar));
         this.getSupportActionBar().setTitle("");
+
+        this.mCoordinatorLayout = (CoordinatorLayout) this.findViewById(R.id.coordinatorLayout);
 
         this.mImageViewTeamGuest = (ImageView) this.findViewById(R.id.imageViewTeamGuest);
         this.mImageViewTeamHome = (ImageView) this.findViewById(R.id.imageViewTeamHome);
@@ -68,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter i = new IntentFilter(WwGameReport.INTENT_REPORT_UPDATED);
         this.registerReceiver(this.mWwGameReportUpdatedBroadcastReceiver, i);
 
+        if(WwGameReportHolder.i(this) == null) {
+            Snackbar.make(this.mCoordinatorLayout, "Spielbericht wird geladen", Snackbar.LENGTH_LONG).show();
+
+        }
     }
 
     @Override

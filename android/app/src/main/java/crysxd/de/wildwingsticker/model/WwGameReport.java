@@ -63,7 +63,6 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
 
     void setContext(Context con) {
         this.mContext = con.getApplicationContext();
-        this.propagateUpdate();
 
     }
 
@@ -111,17 +110,14 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
         }
 
         /* Insert */
-        this.put(gameEvent.getId(), gameEvent);
-
-        /* Propagate change */
-        this.propagateUpdate();
+        this.put(gameEvent.getId() * -1, gameEvent);
 
         /* Return */
         return gameEvent;
 
     }
 
-    private void propagateUpdate() {
+    public void propagateUpdate() {
         Intent i = new Intent(INTENT_REPORT_UPDATED);
         this.mContext.sendBroadcast(i);
 

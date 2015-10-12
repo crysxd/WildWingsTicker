@@ -3,12 +3,15 @@ package crysxd.de.wildwingsticker.view;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import crysxd.de.wildwingsticker.R;
 import crysxd.de.wildwingsticker.model.WwGameEvent;
@@ -94,6 +97,8 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     public WwGameReportAdapter(Context con, WwGameReport report) {
         this.mDataSet = report;
         this.mContext = con;
+
+        Log.i(this.getClass().getSimpleName(), "Creating adapter");
 
     }
 
@@ -184,6 +189,6 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     }
 
     private WwGameEvent getItem(int position) {
-        return (WwGameEvent) this.mDataSet.values().toArray()[this.mDataSet.size() - position - 1];
+        return new ArrayList<>(this.mDataSet.values()).get(position);
     }
 }
