@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +43,7 @@ public class WwImageLoadTask extends AsyncTask<String, Void, Drawable> {
             in.close();
             return d;
 
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | InterruptedIOException e) {
             return null;
 
         } catch (Exception e) {
