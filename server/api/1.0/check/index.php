@@ -3,7 +3,7 @@
 	DEFINE('BUFFER_FILE_PATH', '_buffer.json');
 	DEFINE('BUFFER_KEY_LENGTH', 'text_length');
 	DEFINE('BUFFER_KEY_LAST_ID', 'last_id');
-	DEFINE('MAX_GCM_MESSAGE_LENGTH', 1000);
+	DEFINE('MAX_GCM_MESSAGE_LENGTH', 4000);
 
 	include_once('../_db.php');
 
@@ -66,24 +66,24 @@
 	echo "Pushing to $size clients".PHP_EOL;
 
 	// Build the notification dat (the new text + the other data)
-	$notificationData = $remoteData;
+	$notificationData = array();
 	$notificationData['texte'] = $newData;
-	$notificationData['spielstand'] = $notificationData['spielstand'][0];
-	$notificationData['spielstatus'] = $notificationData['spielstatus'][0];
+	$notificationData['spielstand'] = $remoteData['spielstand'];
+	$notificationData['spielstatus'] = $remoteData['spielstatus'];
 
 	// Create JSON data text ans split
 	$data = json_encode($notificationData);
 	$data = str_split($data, MAX_GCM_MESSAGE_LENGTH);
 	$parts_total = sizeof($data);
 	echo "Splitting message into $parts_total parts".PHP_EOL;
-	echo "GCM responses:".PHP_EOL;
 
 	// Open connection
 	$ch = curl_init();
 
 	// Send parts
+	$message_id = time();
 	for($i=0; $i<$parts_total; $i++) {
-		send_notification($ch, $ids, $data[$i], $i, $parts_total);
+		send_notification($ch, $ids, $data[$i], $i, $parts_total, $message_id);
 	}
 
 	// Close connection
@@ -92,11 +92,14 @@
 	// Write buffer
 	file_put_contents(BUFFER_FILE_PATH, json_encode(array(BUFFER_KEY_LENGTH => strlen($remoteText), BUFFER_KEY_LAST_ID => $lastId)));
 
-	function send_notification($ch, $ids, $data, $part_index, $parts_total) {
+	function send_notification($ch, $ids, $data, $part_index, $parts_total, $message_id) {
+		echo "Sending $part_index of $parts_total".PHP_EOL;
 		// Push data using Google Cloud Messaging API
 		$googleApiParams = array();
 		$googleApiParams['registration_ids'] = $ids;
-		$googleApiParams['data'] = array('data' => $data, 'parts_total' => $parts_total, 'part_index' => $part_index);
+		$googleApiParams['data'] = array('data' => $data, 'parts_total' => $parts_total, 'part_index' => $part_index, 'message_id' => $message_id);
+
+		print_r($googleApiParams['data']);
 
 		$headers = array( 
 	        'Authorization: key=AIzaSyAIeuzn_BTMRgkCqFJmw1kD6_jI95mq3H8',
@@ -111,6 +114,7 @@
 		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($googleApiParams));
 
 		// Execute post
+		echo "GCM response:".PHP_EOL;
 		$result = curl_exec($ch);
 		echo $result.PHP_EOL;
 
