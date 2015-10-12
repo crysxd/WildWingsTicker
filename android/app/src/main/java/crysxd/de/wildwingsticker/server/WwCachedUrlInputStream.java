@@ -44,6 +44,10 @@ public class WwCachedUrlInputStream extends InputStream {
             } catch (FileNotFoundException e) {
                 this.getCacheFile().createNewFile();
 
+            } catch(Exception e) {
+                this.getCacheFile().delete();
+                throw e;
+
             }
         }
 
