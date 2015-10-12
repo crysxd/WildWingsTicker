@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import crysxd.de.wildwingsticker.R;
 import crysxd.de.wildwingsticker.model.WwGameEvent;
 import crysxd.de.wildwingsticker.model.WwGameReport;
+import crysxd.de.wildwingsticker.model.WwGameReportHolder;
 import crysxd.de.wildwingsticker.model.WwGoalGameEvent;
 import crysxd.de.wildwingsticker.model.WwPenaltyGameEvent;
 import crysxd.de.wildwingsticker.model.WwPlayerCausedGameEvent;
@@ -94,14 +95,17 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     private WwGameReport mDataSet;
     private Context mContext;
 
-    public WwGameReportAdapter(Context con, WwGameReport report) {
-        this.mDataSet = report;
+    public WwGameReportAdapter(Context con) {
         this.mContext = con;
 
         Log.i(this.getClass().getSimpleName(), "Creating adapter");
 
     }
 
+    public void onDataSetChanged() {
+        this.mDataSet = WwGameReportHolder.i(this.mContext);
+        this.notifyDataSetChanged();
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout mCoordinatorLayout;
 
     private RecyclerView mEventList;
-    private RecyclerView.Adapter mEventListAdapter;
+    private WwGameReportAdapter mEventListAdapter;
     private RecyclerView.LayoutManager mEventListLayout;
 
     private ImageView mImageViewTeamHome;
@@ -58,25 +59,33 @@ public class MainActivity extends AppCompatActivity {
         this.mEventList.setHasFixedSize(true);
         this.mEventListLayout = new LinearLayoutManager(this);
         this.mEventList.setLayoutManager(this.mEventListLayout);
+        this.mEventListAdapter = new WwGameReportAdapter(this);
+        this.mEventList.setAdapter(this.mEventListAdapter);
 
         this.mToolbarLayout = (CollapsingToolbarLayout) this.findViewById(R.id.toolbar_layout);
         this.mToolbarLayout.setTitle("0:0");
         this.mToolbarLayout.setExpandedTitleColor(Color.argb(255, 40, 40, 40));
+
+        this.mWwGameReportUpdatedBroadcastReceiver = new WwGameReportUpdatedBroadcastReceiver();
+        IntentFilter i = new IntentFilter(WwGameReport.INTENT_REPORT_UPDATED);
+        this.registerReceiver(this.mWwGameReportUpdatedBroadcastReceiver, i);
+
+        this.update();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.update();
-
-        this.mWwGameReportUpdatedBroadcastReceiver = new WwGameReportUpdatedBroadcastReceiver();
-        IntentFilter i = new IntentFilter(WwGameReport.INTENT_REPORT_UPDATED);
-        this.registerReceiver(this.mWwGameReportUpdatedBroadcastReceiver, i);
 
         if(WwGameReportHolder.i(this) == null) {
-            Snackbar.make(this.mCoordinatorLayout, "Spielbericht wird geladen", Snackbar.LENGTH_LONG).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(mCoordinatorLayout, "Spielbericht wird geladen", Snackbar.LENGTH_LONG).show();
 
+                }
+            }, 1000);
         }
     }
 
@@ -103,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
         this.mToolbarLayout.setTitle(title);
 
         /* Update list */
-        this.mEventListAdapter = new WwGameReportAdapter(this, WwGameReportHolder.i(this));
-        this.mEventList.setAdapter(this.mEventListAdapter);
+        this.mEventListAdapter.onDataSetChanged();
 
     }
 
