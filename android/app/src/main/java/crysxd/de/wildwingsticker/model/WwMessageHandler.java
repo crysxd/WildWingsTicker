@@ -1,7 +1,10 @@
 package crysxd.de.wildwingsticker.model;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import crysxd.de.wildwingsticker.R;
+import crysxd.de.wildwingsticker.view.MainActivity;
 
 /**
  * Created by cwuer on 10/12/2015.
@@ -77,9 +81,17 @@ public class WwMessageHandler {
                 break;
         }
 
+        /* Create Intent */
+        Intent i = new Intent(this.mContext, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pi = PendingIntent.getActivity(this.mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+
         /* Set sound and small icon */
         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         builder.setSmallIcon(R.drawable.ic_stat_default);
+        builder.setVibrate(new long[]{400, 200, 400});
+        builder.setLights(Color.BLUE, 400, 200);
+        builder.setContentIntent(pi);
 
         /* Notify */
         NotificationManager m = (NotificationManager) this.mContext.getSystemService(Context.NOTIFICATION_SERVICE);
