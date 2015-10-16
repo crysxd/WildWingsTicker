@@ -45,7 +45,7 @@ public class WwMessageHandler {
             WwGameEvent event = report.addGameEvent(eventJSON);
 
             if(event.getType() != 1 && showNotifications) {
-                this.showEventNotification(event);
+                this.showEventNotification(event, report.isHome(event));
 
             }
         }
@@ -58,7 +58,7 @@ public class WwMessageHandler {
 
     }
 
-    private void showEventNotification(WwGameEvent event) {
+    private void showEventNotification(WwGameEvent event, boolean isHome) {
         /* Create minute String */
         String minute = event.getMinute() + ". Minute";
 
@@ -76,7 +76,8 @@ public class WwMessageHandler {
             case 4:
             case 5:
                 WwGoalGameEvent e2 = (WwGoalGameEvent) event;
-                builder.setContentTitle("Tor für die " + e2.getPlayerTeamName());
+                String goal = isHome ? "Tooooor für die" : "Tor für";
+                builder.setContentTitle(goal + " " + e2.getPlayerTeamName());
                 builder.setContentText(minute + " | " + e2.getScore() + " | " + e2.getPlayer());
                 break;
         }

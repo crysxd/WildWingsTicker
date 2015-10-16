@@ -182,4 +182,8 @@ public class WwGameReport extends TreeMap<Integer, WwGameEvent> {
 
     }
 
+    public boolean isHome(WwGameEvent e) {
+        return e instanceof WwPlayerCausedGameEvent && ((WwPlayerCausedGameEvent) e).getPlayerTeamName().equals(this.mHomeName);
+
+    }
 }

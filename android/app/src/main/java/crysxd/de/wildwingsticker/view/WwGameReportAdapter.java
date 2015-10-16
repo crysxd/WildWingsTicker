@@ -153,7 +153,7 @@ public class WwGameReportAdapter extends RecyclerView.Adapter<WwGameReportAdapte
     }
 
     private void onBindGoalViewHolder(GoalViewHolder holder, WwGoalGameEvent e) {
-        holder.mTextViewTitle.setText("Tor");
+        holder.mTextViewTitle.setText(this.mDataSet.isHome(e) ? "Tooooooor" : "Tor");
         holder.mTextViewText.setText("für " + e.getPlayerTeamName());
         holder.mTextViewPlayer.setText("durch " + e.getPlayer());
 
