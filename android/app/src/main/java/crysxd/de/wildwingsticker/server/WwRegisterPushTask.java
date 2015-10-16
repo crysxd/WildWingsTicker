@@ -2,6 +2,7 @@ package crysxd.de.wildwingsticker.server;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -29,16 +30,21 @@ public class WwRegisterPushTask extends AsyncTask<Void, Void, Void> {
         try {
             /* Fetch token for GCM */
             GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this.CONTEXT.getApplicationContext());
-            String id = gcm.register(this.CONTEXT.getString(R.string.gcm_project_number));
+            String gcmId = gcm.register(this.CONTEXT.getString(R.string.gcm_project_number));
+
+            /* Fetch device id */
+            String deviceId = Settings.Secure.getString(this.CONTEXT.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
 
             /* Log */
             if(BuildConfig.DEBUG) {
-                Log.i(this.getClass().getSimpleName(), "Will register for push notifications with id " + id);
+                Log.i(this.getClass().getSimpleName(), "Will register device " + deviceId + " for push notifications with id " + gcmId);
             }
 
             /* Create API call parameters */
             Map<String, String> apiCallParams = new HashMap<>();
-            apiCallParams.put("id", id);
+            apiCallParams.put("gcm_id", gcmId);
+            apiCallParams.put("device_id", deviceId);
 
             /* Create API call */
             WwServerApiCall apiCall = new WwServerApiCall("push/register");

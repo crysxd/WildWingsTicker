@@ -11,12 +11,12 @@
     check_http_method(array('POST'));
 
     /* Assure all needed parameters are available */
-    check_parms_available(array('id'), $_POST);
+    check_parms_available(array('device_id', 'gcm_id'), $_POST);
 
     /* Insert into db */
-    $stmt = $db_link->prepare('INSERT INTO push_targets(id) VALUES(?) ON DUPLICATE KEY UPDATE registered_on=NOW()');
+    $stmt = $db_link->prepare('INSERT INTO push_targets(device_id, gcm_id) VALUES(?, ?) ON DUPLICATE KEY UPDATE gcm_id=?, registered_on=NOW()');
     db_check_result($stmt);
-    $result = $stmt->bind_param('s', $_POST['id']);
+    $result = $stmt->bind_param('sss', $_POST['device_id'], $_POST['gcm_id'], $_POST['gcm_id']);
     db_check_result($result);
     $result = $stmt->execute();
     db_check_result($result);

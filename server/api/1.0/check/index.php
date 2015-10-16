@@ -51,7 +51,7 @@
 
 	// Fetch IDs which should be notified
 	db_open();
-	$result = $db_link->query('SELECT id FROM push_targets');
+	$result = $db_link->query('SELECT gcm_id FROM push_targets');
 	db_check_result($result);
 	$ids = array();
 
