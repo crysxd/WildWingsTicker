@@ -35,10 +35,10 @@ public class WwMessageHandler {
         JSONObject score = message.getJSONArray("spielstand").getJSONObject(0);
         JSONObject status = message.getJSONArray("spielstatus").getJSONObject(0);
 
-            /* Create a report */
+        /* Create a report (or load the current one and update the meta data */
         WwGameReport report = WwGameReportHolder.ic(this.mContext, score, status);
 
-            /* Parse all events and add them to the report */
+        /* Parse all events and add them to the report */
         JSONArray events = message.getJSONArray("texte");
         for(int i=0; i<events.length(); i++) {
             JSONObject eventJSON = events.getJSONObject(i);
@@ -50,7 +50,7 @@ public class WwMessageHandler {
             }
         }
 
-            /* Save the report */
+        /* Save the report */
         WwGameReportHolder.persist();
 
         Log.i(this.getClass().getSimpleName(), "Propagating update...");

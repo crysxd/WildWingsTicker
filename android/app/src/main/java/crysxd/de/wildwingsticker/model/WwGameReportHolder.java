@@ -51,6 +51,12 @@ public class WwGameReportHolder {
             mSingleton.setContext(con);
         }
 
+
+        else {
+            /* update meta data */
+            mSingleton.setGameMetaData(score, status);
+        }
+
         /* Return it */
         return mSingleton;
 
