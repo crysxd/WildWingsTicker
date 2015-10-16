@@ -23,8 +23,6 @@ import crysxd.de.wildwingsticker.model.WwPlayerCausedGameEvent;
 import crysxd.de.wildwingsticker.model.WwTextGameEvent;
 import crysxd.de.wildwingsticker.server.WwGoalImageLoadTask;
 import crysxd.de.wildwingsticker.server.WwImageLoadTask;
-import crysxd.de.wildwingsticker.server.WwPlayerImageLoadTask;
-import crysxd.de.wildwingsticker.server.WwTeamImageLoadTask;
 
 /**
  * Created by cwuer on 10/5/15.
